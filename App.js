@@ -1,9 +1,18 @@
+import 'react-native-gesture-handler';
 import SplashScreen from "./src/screens/splash";
-import MainScreen from "./src/screens/mainScreen";
+import { NavigationContainer } from '@react-navigation/native'
+import Drawer from './src/navigators/drawerNavigator'
+
+import { Provider } from 'react-redux'
+import store from './src/redux/store'
 
 const App = () => {
   return (
-    <MainScreen />
+    <Provider store={store}>
+      <NavigationContainer>
+        <Drawer />
+      </NavigationContainer>
+    </Provider>
   )
 }
 

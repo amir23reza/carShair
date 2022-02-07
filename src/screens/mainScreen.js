@@ -26,7 +26,7 @@ const MainScreen = ({ navigation }) => {
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={{ marginLeft: 15 }}
-                            onPress={() => { }}
+                            onPress={() => { navigation.openDrawer() }}
                         >
                             <Icon type='font-awesome-5' name="filter" color={colors.logoBlack} />
                         </TouchableOpacity>
