@@ -11,3 +11,5 @@ export const calculateLogoWidth = () => {
         return parseInt(width * 0.75)
     }
 }
+
+export const baseURL = "https://vpic.nhtsa.dot.gov/api"

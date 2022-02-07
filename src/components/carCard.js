@@ -27,13 +27,13 @@ const CarCard = ({car_}) => {
         <TouchableOpacity>
             <View style={styles.carContainer}>
                 <View style={styles.cardImageContainer}>
-                    <Image source={images[0]} style={styles.cardImage} resizeMode="cover" />
+                    <Image source={source()} style={styles.cardImage} resizeMode="cover" />
                 </View>
                 <LinearGradient colors={[colors.logoBlack, colors.logoWhite]} style={{borderBottomLeftRadius: 10}} start={{x:0, y:0}} end={{x:1,y:1}}>
                     <View style={styles.cardDetailsContainer}>
                         <View style={{ flex: 1 }}>
-                            <Text style={styles.carMake}>Honda</Text>
-                            <Text style={styles.carModel}>Civic</Text>
+                            <Text style={styles.carMake}>{car_.Make_Name}</Text>
+                            <Text style={styles.carModel}>{car_.Model_Name}</Text>
                         </View>
                         <View style={{ flex: 1, alignItems: "flex-end", justifyContent: "center" }}>
                             <Icon type="font-awesome-5" name="chevron-right" style={{ color: colors.logoGreen }} />

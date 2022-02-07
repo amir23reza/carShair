@@ -1,19 +1,54 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     View, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView, Text, ActivityIndicator
 } from 'react-native'
+import { baseURL, hexToRgbA } from '../helper/helper'
 import { Header, HeaderProps, Icon, Input } from 'react-native-elements';
 import colors from '../styles/colors'
 import CustomHeader from '../components/customHeader';
 import CarCard from '../components/carCard';
+import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux'
+import { FetchCars_, SearchCars_ } from '../redux/actions/actions'
 
 const MainScreen = ({ navigation }) => {
 
-    
+    const dispatch = useDispatch()
 
     const [isSearching, toggleSearching] = useState()
+    const [loadingVehicles, toggleLoadingVehicles] = useState(true)
     const [searchValue_, setSearchValue] = useState("")
 
+    const {searchedCars} = useSelector(state => ({
+        searchedCars: state.carReducer.searchedCars,
+    }))
+
+    const fetchCars = () => {
+        axios.get(baseURL + "/vehicles/getmodelsformake/merc?format=json")
+            .then(data => {
+                // console.log(data.data)
+                if (data.data.Message == "Response returned successfully") {
+                    dispatch(FetchCars_(data.data.Results))
+                    toggleLoadingVehicles(false)
+                } else {
+                    alert("failed to load data ...! please try again later")
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                alert("failed to load data ...! please try again later")
+            })
+    }
+
+    const searchCars = (searchValue) => {
+        // console.log(searchValue)
+        setSearchValue(searchValue)
+        dispatch(SearchCars_(searchValue))
+    }
+
+    useEffect(() => {
+        fetchCars()
+    }, [])
 
     return (
         <SafeAreaView style={styles.mainView}>
@@ -43,18 +78,34 @@ const MainScreen = ({ navigation }) => {
                             inputStyle={{ color: colors.logoGreen }}
                             placeholderTextColor={colors.logoGreen}
                             inputContainerStyle={{ borderColor: colors.logoGreen }}
-                            onChangeText={setSearchValue}
+                            onChangeText={searchCars}
                         />
-                        <Text style={styles.searchResultNumber}>100 results</Text>
+                        <Text style={styles.searchResultNumber}>{searchedCars.length} results</Text>
                     </View>
                 ) : null
             }
             <ScrollView>
                 <View style={styles.cardsContainer}>
-                    <CarCard />
-                    <CarCard />
-                    <CarCard />
-                    <CarCard />
+                    {
+                        loadingVehicles ? (
+                            <View>
+                                <ActivityIndicator size="large" color={colors.logoGreen} style={{ marginTop: "40%" }} />
+                                <Text style={{ color: colors.logoBlack }}>Loading Vehicles... Please Wait!</Text>
+                            </View>
+                        ) : searchedCars.length == 0 ? (
+                            <Text style={{color: colors.logoBlack, textAlign: "center", marginVertical: "10%"}}>
+                                No Vehicles Found ...
+                            </Text>
+                        ) : (
+                            <View>
+                                {
+                                    searchedCars.map((car_, index) => (
+                                        <CarCard key={index} car_={car_}  />
+                                    ))
+                                }
+                            </View>
+                        )
+                    }
                 </View>
             </ScrollView>
         </SafeAreaView>
